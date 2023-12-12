@@ -10,14 +10,14 @@ CREATE TABLE sap.clientes_kna1 (
     rua VARCHAR(255),
     telefone_1 VARCHAR(100),
     endereco VARCHAR(255),
-    data_criacao DATETIME,
+    data_criacao DATE,
     criado_por VARCHAR(100),
     bairro VARCHAR(100),
     idioma VARCHAR(100),
     cnpj VARCHAR(14),  -- Assuming this is a Brazilian CNPJ, which has 14 characters
     cpf VARCHAR(11),  -- Assuming this is a Brazilian CPF, which has 11 characters
     pessoa_fisica BIT,
-    faturamento_anual DECIMAL(18, 2),  -- Assuming it's a decimal number
+    faturamento_anual VARCHAR(100),  -- Assuming it's a decimal number
     domicilio_fiscal VARCHAR(100),
     cnae_fiscal VARCHAR(100),
     natureza_juridica VARCHAR(4),  -- This might be the nature code (e.g., 205-4 for LTDA)
@@ -38,6 +38,9 @@ CREATE TABLE sap.clientes_knvv (
     data_criacao DATE,
     inserted_at DATETIME
 );
+
+ALTER TABLE sap.clientes_knvv
+ADD unique_key AS CONCAT(id_cliente, organizacao_vendas, canal_distribuicao, setor_atividade)
 
 CREATE TABLE sap.notas_fiscais_j1bnfdoc (
     numero_documento INT,
@@ -80,20 +83,23 @@ CREATE TABLE sap.notas_fiscais_j1bnfdoc (
 );
 
 CREATE TABLE sap.notas_fiscais_j1bnflin (
-    numero_documento INT,
-    numero_item_documento INT,
+    numero_documento VARCHAR(100),
+    numero_item_documento VARCHAR(100),
     material VARCHAR(10),
-    area_avaliacao INT,
+    area_avaliacao VARCHAR(10),
     texto_breve_material VARCHAR(255),
     referencia_documento_origem VARCHAR(100),
-    valor_liquido DECIMAL(18, 2),
-    centro INT,
+    valor_liquido VARCHAR(100),
+    centro VARCHAR(10),
     pedido VARCHAR(255),
-    codigo_conta_analitica_contabil_debito_credito INT,
+    codigo_conta_analitica_contabil_debito_credito VARCHAR(100),
     lc_116_codigo_tipo_servico VARCHAR(100),
-    centro_lucro INT,
+    centro_lucro VARCHAR(100),
     inserted_at DATETIME
 );
+
+ALTER TABLE sap.notas_fiscais_j1bnflin
+ADD unique_key AS CONCAT(numero_documento,numero_item_documento)
 
 CREATE TABLE sap.faturamento_vbrk (
     documento_faturamento INT,
@@ -126,25 +132,25 @@ CREATE TABLE sap.faturamento_vbrk (
 CREATE TABLE sap.faturamento_vbrp (
     data_prestacao_servico DATE,
     valor_liquido VARCHAR(100),
-    documento_vendas INT,
-    item INT,
+    documento_vendas VARCHAR(10),
+    item VARCHAR(10),
     denominacao_item VARCHAR(255),
     categoria_item VARCHAR(10),
-    grupo_class_cont_mat INT,
+    grupo_class_cont_mat VARCHAR(10),
     devolucao VARCHAR(10),
     centro_lucro VARCHAR(10),
     material_inserido VARCHAR(10),
     montante_imposto VARCHAR(100),
     documento_faturamento VARCHAR(10),
     tipo_documento_faturamento VARCHAR(10),
-    organizacao_vendas INT,
-    canal_distribuicao INT,
+    organizacao_vendas VARCHAR(10),
+    canal_distribuicao VARCHAR(10),
     status VARCHAR(10),
-    pagador INT, 
+    pagador VARCHAR(10), 
     data_faturamento DATE,
-    empresa INT,
-    numero_condicao_documento INT,
-    documento_faturamento_estornado INT,
+    empresa VARCHAR(10),
+    numero_condicao_documento VARCHAR(10),
+    documento_faturamento_estornado VARCHAR(10),
     categoria_documento_sd VARCHAR(10),
     inserted_at DATETIME
 );
@@ -171,6 +177,8 @@ CREATE TABLE sap.ordens_venda_vbak (
 
 CREATE TABLE sap.ordens_venda_vbap (
     documento_vendas VARCHAR(100),
+    item VARCHAR(10),
+    material VARCHAR(100),
     denominacao_item VARCHAR(100),
     categoria_item VARCHAR(100),
     motivo_recusa VARCHAR(255),
@@ -193,10 +201,13 @@ CREATE TABLE sap.ordens_venda_vbap (
     emissor_ordem INT,
     numero_condicao_documento VARCHAR(255),
     referencia_cliente VARCHAR(255),
-    data_faturamento DATE,
+    data_faturamento VARCHAR(100),
     data_pagamento_estimado DATE,
     inserted_at DATETIME
 );
+
+ALTER TABLE sap.ordens_venda_vbap
+ADD unique_key AS CONCAT(documento_vendas,item)
 
 CREATE TABLE sap.documentos_contabeis_bkpf (
     empresa VARCHAR(100),
@@ -215,13 +226,18 @@ CREATE TABLE sap.documentos_contabeis_bkpf (
     inserted_at DATETIME
 );
 
+ALTER TABLE sap.documentos_contabeis_bkpf
+ADD unique_key AS CONCAT(empresa,numero_documento,exercicio)
+
 CREATE TABLE sap.documentos_contabeis_bseg (
+    data_lancamento DATE,
+    data_base_prazo_pagamento DATE,
     empresa VARCHAR(100),
     numero_documento VARCHAR(100),
     exercicio VARCHAR(100),
     item VARCHAR(100),
     data_compensacao_1 DATE,
-    data_compensacao DATE,
+    data_compensacao_2 DATE,
     documento_compensacao VARCHAR(100),
     chave_lancamento VARCHAR(100),
     tipo_conta VARCHAR(1),
@@ -248,7 +264,20 @@ CREATE TABLE sap.documentos_contabeis_bseg (
     inserted_at DATETIME
 );
 
+ALTER TABLE sap.documentos_contabeis_bseg
+ADD unique_key AS CONCAT(empresa,numero_documento,exercicio,item)
 
+CREATE TABLE sap.organizacoes_vendas_tvko (
+    organizacao_vendas VARCHAR(10),
+    moeda VARCHAR(10),
+    empresa VARCHAR(10),
+    denominacao VARCHAR(255),
+    endereco VARCHAR(100),
+    texto_endereco VARCHAR(255),
+    organizacao_vendas_refencia_tipo_documento VARCHAR(10),
+    categoria_documento_compras VARCHAR(10),
+    inserted_at DATETIME
+);
 
 
 

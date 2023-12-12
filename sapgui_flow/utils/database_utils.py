@@ -21,10 +21,9 @@ def sqlConnector():
     new_con = 'mssql+pyodbc:///?odbc_connect={}'.format(quoted)
 
     try:
-        engine = create_engine(new_con, fast_executemany=True, use_insertmanyvalues=False)
-        connection = engine.connect()
+        engine = create_engine(new_con, fast_executemany=True)
     except Exception as e:
         msg = f'Error while connecting to SQL Server'
 
         raise ConnectionError(msg)
-    return connection
+    return engine
