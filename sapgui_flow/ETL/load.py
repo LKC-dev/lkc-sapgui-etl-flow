@@ -8,10 +8,10 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger("my_logger")
 
-def slackAlerta(msg):
-    token = (get_secret("prod/Slack"))
-    client = slack.WebClient(token=token)
-    client.chat_postMessage(channel='alertas_engenharia',text=msg)
+# def slackAlerta(msg):
+#     token = (get_secret("prod/Slack"))
+#     client = slack.WebClient(token=token)
+#     client.chat_postMessage(channel='alertas_engenharia',text=msg)
 
 def load_data(df, table_name, schema, table_id_column):
     conn = sqlConnector()
@@ -19,13 +19,15 @@ def load_data(df, table_name, schema, table_id_column):
     etl = f'v4data-sapgui-flow-{table_name}'
     time_now = datetime.datetime.now()
     df_data = df
+    df_data.reset_index(drop=True)
     df_data[f'{inserted_at}'] = time_now
     try:
         logger.info(f'{table_name} - Started loading to SQL SERVER')
         # df_data.to_sql(name=table_name, index=False, con=conn, schema=schema, if_exists='append', chunksize=10000)
-        df_data.to_sql(name=table_name, index=False, con=conn, schema=schema, if_exists='append')
+        df_data.to_sql(name=table_name, index=False, con=conn, schema=schema, if_exists='append', method='multi', chunksize=((2100//len(df_data.columns)-1)))
         logger.info(f'{table_name} - Inserted into')
         try:
+            conn = sqlConnector().connect()
             logger.info(f'{table_name} - Started deduplicating')
             query = text(f"""
                         with cte as (select {table_id_column}, max(inserted_at) max_data
@@ -43,20 +45,20 @@ def load_data(df, table_name, schema, table_id_column):
         except Exception as e:
             logger.info(e)
             logger.error(f'{table_name} - Error deduplicating')
-        #     slackAlerta(f"""
-        # URGENTE VERIFICAR:
-        # ERRO: Erro ao deduplicar - {schema}.{table_name}
-        # ETL: {etl}
-        # {time_now}
-        # """)
+            slackAlerta(f"""
+        URGENTE VERIFICAR:
+        ERRO: Erro ao deduplicar - {schema}.{table_name}
+        ETL: {etl}
+        {time_now}
+        """)
         conn.close()    
     except Exception as e:
         logger.info(e)
         logger.error(f"{table_name} - Error inserting SQL Server")
-        # slackAlerta(f"""
-        # URGENTE VERIFICAR:
-        # ERRO: Erro ao inserir SQL Server - {schema}.{table_name}
-        # ETL: {etl}
-        # {time_now}
-        # """)
+        slackAlerta(f"""
+        URGENTE VERIFICAR:
+        ERRO: Erro ao inserir SQL Server - {schema}.{table_name}
+        ETL: {etl}
+        {time_now}
+        """)
     conn.close()

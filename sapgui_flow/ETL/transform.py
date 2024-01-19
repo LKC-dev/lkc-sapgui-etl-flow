@@ -68,6 +68,13 @@ def transformVBAK(data):
     }
     df.rename(columns=columns_to_rename, inplace=True)
     df['data_criacao'] = pd.to_datetime(df['data_criacao'].str.replace('.', '/'), format='%d/%m/%Y')
+    df['documento_vendas'] = df['documento_vendas'].astype(str).str[:-2]
+    df['organizacao_vendas'] = df['organizacao_vendas'].astype(str).str[:-2]
+    df['canal_distribuicao'] = df['canal_distribuicao'].astype(str).str[:-2]
+    df['setor_atividade'] = df['setor_atividade'].astype(str).str[:-2]
+    df['probabilidade'] = df['probabilidade'].astype(str).str[:-2]
+    df['numero_condicao_documento'] = df['numero_condicao_documento'].astype(str).str[:-2]
+    df['emissor_ordem'] = df['emissor_ordem'].astype(str).str[:-2]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -111,7 +118,10 @@ def transformKNA1(data):
     df['pessoa_fisica'] = df['pessoa_fisica'].replace({'X': True, '': False}).astype(bool)
     df['data_criacao'] = pd.to_datetime(df['data_criacao'].str.replace('.', '.'), format='%d.%m.%Y')
     df['telefone_1'] = df['telefone_1'].str.replace(r'\D', '', regex=True)
-    df = df.iloc[:, [0, 1]]
+    df['endereco'] = df['endereco'].astype(str).str[:-2]
+
+    # df = df.iloc[:, [0, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]]
+
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -137,6 +147,11 @@ def transformKNVV(data):
     }
     df.rename(columns=columns_to_rename, inplace=True)
     df['data_criacao'] = pd.to_datetime(df['data_criacao'].str.replace('.', '/'), format='%d/%m/%Y')
+    # df['data_criacao'] = df['data_criacao'].str[10:]
+    df['organizacao_vendas'] = df['organizacao_vendas'].astype(str).str[:-2]
+    df['id_cliente'] = df['id_cliente'].astype(str).str[:-2]
+    df['esquema_cliente'] = df['esquema_cliente'].astype(str).str[:-2]
+    df['grupo_precos_cliente'] = df['grupo_precos_cliente'].astype(str).str[:-2]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -205,11 +220,13 @@ def transformJ_1BNFDOC(data):
     df['valor_total_incluindo_imposto'] = df['valor_total_incluindo_imposto'].str.replace(',','.')
     df['numero_nota_fiscal'] = df['numero_nota_fiscal'].replace('', pd.NA)
     df['id_parceiro'] = df['id_parceiro'].replace('', pd.NA)
+    df['id_parceiro'] = df['id_parceiro'].astype(str).str[:-2]
     df['numero_nfe_servicos'] = df['numero_nfe_servicos'].replace('', pd.NA)
     df['status_documento'] = df['status_documento'].replace('', pd.NA)
     df['codigo_status'] = df['codigo_status'].replace('', pd.NA)
+
     df = df.replace('', pd.NA)
-    df = df[df['modificado_em'] >= five_days_ago]
+    # df = df[df['modificado_em'] >= five_days_ago]
 
     df.to_csv('df.csv')
     os.remove('data.txt')
@@ -239,6 +256,11 @@ def transformJ_1BNFLIN(data):
         'Cen.lucro': 'centro_lucro'
     }
     df.rename(columns=columns_to_rename, inplace=True)
+    df['centro'] = df['centro'].astype(str).str[:-2]
+    df['area_avaliacao'] = df['area_avaliacao'].astype(str).str[:-2]
+    df['numero_documento'] = df['numero_documento'].astype(str).str[:-2]
+    df['numero_item_documento'] = df['numero_item_documento'].astype(str).str[:-2]
+    df['referencia_documento_origem'] = df['referencia_documento_origem'].astype(str).str[:-2]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -285,7 +307,14 @@ def transformVBRK(data):
     df['data_faturamento'] = pd.to_datetime(df['data_faturamento'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_criacao'] = pd.to_datetime(df['data_criacao'].str.replace('.', '/'), format='%d/%m/%Y')
     df['modificado_em'] = pd.to_datetime(df['modificado_em'].str.replace('.', '/'), format='%d/%m/%Y')
-    df = df[df['modificado_em'] >= five_days_ago]
+    df['documento_faturamento'] = df['documento_faturamento'].astype(str).str[:-2]
+    df['organizacao_vendas'] = df['organizacao_vendas'].astype(str).str[:-2]
+    df['canal_distribuicao'] = df['canal_distribuicao'].astype(str).str[:-2]
+    df['numero_condicao_documento'] = df['numero_condicao_documento'].astype(str).str[:-2]
+    df['pagador'] = df['pagador'].astype(str).str[:-2]
+    df['atribuicao'] = df['atribuicao'].astype(str).str[:-2]
+
+    # df = df[df['modificado_em'] >= five_days_ago]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -327,6 +356,20 @@ def transformVBRP(data):
     df = df.replace('', pd.NA)
     df['data_faturamento'] = pd.to_datetime(df['data_faturamento'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_prestacao_servico'] = pd.to_datetime(df['data_prestacao_servico'].str.replace('.', '/'), format='%d/%m/%Y')
+    df['documento_vendas'] = df['documento_vendas'].astype(str)
+    df['centro_lucro'] = df['centro_lucro'].astype(str).str[:-2]
+    df['documento_faturamento'] = df['documento_faturamento'].astype(str).str[:-2]
+    df['organizacao_vendas'] = df['organizacao_vendas'].astype(str).str[:-2]
+    df['pagador'] = df['pagador'].astype(str).str[:-2]
+    df['empresa'] = df['empresa'].astype(str).str[:-2]
+    df['numero_condicao_documento'] = df['numero_condicao_documento'].astype(str).str[:-2]
+    df['documento_faturamento_estornado'] = df['documento_faturamento_estornado'].astype(str).str[:-2]
+    df['documento_vendas'] = df['documento_vendas'].astype(str).str[:-2]
+    df['item'] = df['item'].astype(str).str[:-2]
+    df['grupo_class_cont_mat'] = df['grupo_class_cont_mat'].astype(str).str[:-2]
+    df['canal_distribuicao'] = df['canal_distribuicao'].astype(str).str[:-2]
+    df['devolucao'] = df['devolucao'].replace({'X': True, '': False, pd.NA: False}).astype(bool)
+
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -340,6 +383,8 @@ def transformVBAP(data):
     columns_to_rename = {
         'Criado em': 'data_criacao',
         'Criado por': 'criado_por',
+        'Item': 'item',
+        'Material': 'material',
         'Criado/a': 'criado_por',
         'GCCM': 'grupo_class_cont_mat',
         'Denominação it.': 'denominacao_item',
@@ -373,9 +418,12 @@ def transformVBAP(data):
     df['modificado_em'] = pd.to_datetime(df['modificado_em'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_criacao'] = pd.to_datetime(df['data_criacao'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_pagamento_estimado'] = pd.to_datetime(df['data_pagamento_estimado'].str.replace('.', '/'), format='%d/%m/%Y')
-    df['data_faturamento'] = pd.to_datetime(df['data_faturamento'].str.replace('.', '/'), format='%d/%m/%Y')
+    # df['data_faturamento'] = pd.to_datetime(df['data_faturamento'].str.replace('.', '/'), format='%d/%m/%Y')
+    df['documento_vendas'] = df['documento_vendas'].astype(str).str[:-2]
+    df['item'] = df['item'].astype(str).str[:-2]
+    df['numero_condicao_documento'] = df['numero_condicao_documento'].astype(str).str[:-2]
     df = df.replace('', pd.NA)
-    df = df[df['modificado_em'] >= five_days_ago]
+    # df = df[df['modificado_em'] >= five_days_ago]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -393,7 +441,7 @@ def transformBKPF(data):
         'Dt.lçto.': 'data_lancamento',
         'Dt.entr.': 'data_entrada',
         'Período': 'periodo',
-        'Entrado em': 'entrado_em',
+        'Entrado em': 'data_entrada',
         'Usuário': 'nome_usuario',
         'Chave referência': 'chave_referencia',
         'Chave refer.': 'chave_referencia',
@@ -408,22 +456,28 @@ def transformBKPF(data):
     # df['data_documento'] = df['data_documento'].str.replace('0223', '2023')
     # df['data_documento'] = df['data_documento'].str.replace('0203', '2023')
     # df['data_documento'] = df['data_documento'].str.replace('022', '2023')
-    # df['data_documento'] = df['data_documento'].str.replace('202', '2023')
+    # df['data_documento'] = df['data_documento'].str.replace('202', '2023') ARRUMAR DOCUMENTO ESTORNO PRA BOOL
     # df['data_documento'] = pd.to_datetime(df['data_documento'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_lancamento'] = pd.to_datetime(df['data_lancamento'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_entrada'] = pd.to_datetime(df['data_entrada'].str.replace('.', '/'), format='%d/%m/%Y')
     df['estornado'] = df['estornado'].replace({'X': True, '': False}).astype(bool)
+    df['empresa'] = df['empresa'].astype(str).str[:-2]
+    df['numero_documento'] = df['numero_documento'].astype(str).str[:-2]
+    df['exercicio'] = df['exercicio'].astype(str).str[:-2]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
 
 def transformBSEG(data):
-    df = pd.read_csv(data, delimiter="|", skiprows=3, skipfooter=1, encoding='iso-8859-1', encoding_errors='replace', on_bad_lines='warn', engine='python')
+    df = pd.read_csv(data, delimiter="|", skiprows=3, skipfooter=1, encoding='iso-8859-1', encoding_errors='replace', on_bad_lines='warn', engine='python', dtype={'Chave refer.      ': str})
     df = df.iloc[1:]
     df = df.loc[:, ~df.columns.str.contains('Unnamed')]
     df.columns = df.columns.str.strip()
     df = trim_dataframe(df)
     columns_to_rename = {
+        'Dt.lçto.': 'data_lancamento',
+        'Data lçto.': 'data_lancamento',
+        'Data base': 'data_base_prazo_pagamento',
         'Empr': 'empresa',
         'Nº doc.': 'numero_documento',
         'Ano': 'exercicio',
@@ -441,6 +495,7 @@ def transformBSEG(data):
         'Texto': 'texto',
         'Montante': 'montante_alocado',
         'DtPlanej.': 'data_planejamento',
+        'Dt.planej.': 'data_planejamento',
         'Cta.Razão': 'conta_razao_1',
         'CtaRz.': 'conta_razao_2',
         'Cliente': 'cliente',
@@ -458,12 +513,52 @@ def transformBSEG(data):
         'Tipo fluxo': 'tipo_fluxo'
     }
     df.rename(columns=columns_to_rename, inplace=True)
-    df.drop(85069, inplace=True)
+    # df.drop(85069, inplace=True)
     df['data_compensacao_1'] = pd.to_datetime(df['data_compensacao_1'].str.replace('.', '/'), format='%d/%m/%Y')
     df['data_compensacao_2'] = pd.to_datetime(df['data_compensacao_2'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
     df['data_efetiva'] = pd.to_datetime(df['data_efetiva'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
     df['data_planejamento'] = pd.to_datetime(df['data_planejamento'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
+    df['data_lancamento'] = pd.to_datetime(df['data_lancamento'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
+    df['data_base_prazo_pagamento'] = pd.to_datetime(df['data_base_prazo_pagamento'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
     df['anular_compensacao'] = df['anular_compensacao'].replace({'X': True, '': False}).astype(bool)
+    df['empresa'] = df['empresa'].astype(str).str[:-2]
+    df['numero_documento'] = df['numero_documento'].astype(str).str[:-2]
+    df['exercicio'] = df['exercicio'].astype(str).str[:-2]
+    df['item'] = df['item'].astype(str).str[:-2]
+    df['chave_lancamento'] = df['chave_lancamento'].astype(str).str[:-2]
+    df['conta_razao_2'] = df['conta_razao_2'].astype(str).str[:-2]
+    df['item_compensacao'] = df['item_compensacao'].astype(str).str[:-2]
+    # arrumar notação cientifica
+    # df['chave_referencia'] = df['chave_referencia'].astype(str).str[:-2]
+    # df['montante_moeda_funcional'] = df['montante_moeda_funcional'].replace('.', '')
+    # df['chave_referencia'] = df['chave_referencia'].astype(str)
+
+
+    df.to_csv('df.csv')
+    os.remove('data.txt')
+    return df
+
+def transformTVKO(data):
+    df = pd.read_csv(data, delimiter="|", skiprows=3, skipfooter=1, encoding='iso-8859-1', encoding_errors='replace', on_bad_lines='warn', engine='python')
+    df = df.iloc[1:]
+    df = df.loc[:, ~df.columns.str.contains('Unnamed')]
+    df.columns = df.columns.str.strip()
+    df = trim_dataframe(df)
+    columns_to_rename = {
+        'OrgV': 'organizacao_vendas',
+        'Moeda': 'moeda',
+        'Empr': 'empresa',
+        'Denominação': 'denominacao',
+        'Endereço': 'endereco',
+        'Texto endereço': 'texto_endereco',
+        'OrgVndRef': 'organizacao_vendas_refencia_tipo_documento',
+        'Ctg': 'categoria_documento_compras'
+    }
+    df.rename(columns=columns_to_rename, inplace=True)
+    df['organizacao_vendas'] = df['organizacao_vendas'].astype(str).str[:-2]
+    df['empresa'] = df['empresa'].astype(str).str[:-2]
+    df['endereco'] = df['endereco'].astype(str).str[:-2]
+    df['organizacao_vendas_refencia_tipo_documento'] = df['organizacao_vendas_refencia_tipo_documento'].astype(str).str[:-2]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
