@@ -8,6 +8,7 @@ from sapgui_flow.ETL.transform import *
 from sapgui_flow.ETL.load import *
 from sapgui_flow.utils.aws_utils import pushToDataLake
 from retry import retry
+from datetime import datetime
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger("my_logger")
 
@@ -31,10 +32,15 @@ def run():
             logger.info('Deleted old file data.txt')
         else:
             pass
-    start_time = time.time()
+    execution_start_time = time.time()
 
     check_delete_buffer()
 
+    # kill process if sapgui was opened for some reason
+
+    subprocess.call(["taskkill", "/F", "/IM", "saplogon.exe"])
+
+    # time.sleep(180)
     session = open_sap()
 
 
@@ -101,21 +107,6 @@ def run():
     load_data(data,'documentos_contabeis_bkpf', 'sap', 'unique_key')
     pushToDataLake("sap/documentos-contabeis-bkpf", "documentos-contabeis-bkpf.csv", data)
 
-    data = export_data_BSEG('BSEG', 'H_BUDAT', session)
-    logger.info('BSEG - Started transformation')
-    data = transformBSEG(data)
-    logger.info('BSEG - Finished transformation')
-    load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
-    pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
-
-    #Incremental refresh for compensated itens using AUGDT
-    data = export_data_BSEG('BSEG', 'AUGDT', session)
-    logger.info('BSEG - Started transformation')
-    data = transformBSEG(data)
-    logger.info('BSEG - Finished transformation')
-    load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
-    pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
-
     data = export_data('TVKO', session)
     logger.info('TVKO - Started transformation')
     data = transformTVKO(data)
@@ -123,12 +114,44 @@ def run():
     load_data(data,'organizacoes_vendas_tvko', 'sap', 'organizacao_vendas')
     pushToDataLake("sap/organizacoes-vendas-tvko", "organizacoes-vendas-tvko.csv", data)
 
+    start_date = pd.to_datetime('2023-04-01')
+    end_date = pd.to_datetime(datetime.now().date())
+
+    date_ranges = [(start.strftime('%d.%m.%Y'), (start + pd.offsets.MonthEnd(0)).strftime('%d.%m.%Y')) for start in pd.date_range(start_date, end_date, freq='MS')]
+
+    def run_bseg(start_date, end_date):
+        data = export_data_BSEG('BSEG', 'H_BUDAT', session, start_date, end_date)
+        logger.info('BSEG - Started transformation')
+        data = transformBSEG(data)
+        logger.info('BSEG - Finished transformation')
+        # load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
+        # pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
+        return data
+    
+    concatenated_data_bseg = pd.DataFrame()
+
+    for start_date, end_date in date_ranges:
+        bseg_data = run_bseg(start_date, end_date),
+
+        concatenated_data_bseg = pd.concat([concatenated_data_bseg, bseg_data[0]], ignore_index=True)
+    
+    load_data(concatenated_data_bseg, 'documentos_contabeis_bseg', 'sap', 'unique_key')
+    pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", concatenated_data_bseg)    
+
+    #Incremental refresh for compensated itens using AUGDT
+    # data = export_data_BSEG('BSEG', 'AUGDT', session, 360)
+    # logger.info('BSEG - Started transformation')
+    # data = transformBSEG(data)
+    # logger.info('BSEG - Finished transformation')
+    # load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
+    # pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
+
     subprocess.call(["taskkill", "/F", "/IM", "saplogon.exe"])
 
     check_delete_buffer()
 
-    end_time = time.time()
-    execution_time = end_time - start_time
+    execution_end_time = time.time()
+    execution_time = execution_end_time - execution_start_time
 
     memory_usage_bytes = psutil.Process(os.getpid()).memory_info().rss
     memory_usage_megabytes = memory_usage_bytes / 1024 / 1024  # Convert bytes to megabytes
