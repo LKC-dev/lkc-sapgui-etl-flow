@@ -119,4 +119,4 @@ def ping_active(open_session):
 
     current_path = os.getcwd()
     session = open_session
-    
+   

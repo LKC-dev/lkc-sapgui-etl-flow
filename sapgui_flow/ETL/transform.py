@@ -189,6 +189,7 @@ def transformJ_1BNFDOC(data):
         'Doc.orig.': 'numero_documento_original',
         'Data base': 'data_base_prazo_pagamento',
         'Val.total': 'valor_total_incluindo_imposto',
+	'Número NFS-e': 'numero_nfse_servicos',
         'Nº NFS-e': 'numero_nfse_servicos',
         'Número NFS-e': 'numero_nfse_servicos',
         'Nº NF-e': 'numero_nfe_servicos',
@@ -227,7 +228,7 @@ def transformJ_1BNFDOC(data):
     df['codigo_status'] = df['codigo_status'].replace('', pd.NA)
 
     df = df.replace('', pd.NA)
-    df = df[df['modificado_em'] >= five_days_ago]
+    # df = df[df['modificado_em'] >= five_days_ago]
 
     df.to_csv('df.csv')
     os.remove('data.txt')
@@ -316,6 +317,7 @@ def transformVBRK(data):
     df['atribuicao'] = df['atribuicao'].astype(str).str[:-2]
 
     df = df[df['modificado_em'] >= five_days_ago]
+
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -425,7 +427,7 @@ def transformVBAP(data):
     df['item'] = df['item'].astype(str).str[:-2]
     df['numero_condicao_documento'] = df['numero_condicao_documento'].astype(str).str[:-2]
     df = df.replace('', pd.NA)
-    df = df[df['modificado_em'] >= five_days_ago]
+    # df = df[df['modificado_em'] >= five_days_ago]
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
