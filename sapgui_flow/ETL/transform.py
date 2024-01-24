@@ -191,6 +191,7 @@ def transformJ_1BNFDOC(data):
         'Val.total': 'valor_total_incluindo_imposto',
 	'Número NFS-e': 'numero_nfse_servicos',
         'Nº NFS-e': 'numero_nfse_servicos',
+        'Número NFS-e': 'numero_nfse_servicos',
         'Nº NF-e': 'numero_nfe_servicos',
         'Stat.doc.': 'status_documento',
         'Cód.status': 'codigo_status',
@@ -315,7 +316,8 @@ def transformVBRK(data):
     df['pagador'] = df['pagador'].astype(str).str[:-2]
     df['atribuicao'] = df['atribuicao'].astype(str).str[:-2]
 
-    # df = df[df['modificado_em'] >= five_days_ago]
+    df = df[df['modificado_em'] >= five_days_ago]
+
     df.to_csv('df.csv')
     os.remove('data.txt')
     return df
@@ -410,7 +412,7 @@ def transformVBAP(data):
         'SA': 'setor_atividade_1',
         'Cond.doc.': 'numero_condicao_documento',
         'Prb': 'probabilidade',
-	'Referência do cliente': 'referencia_cliente',
+        'Referência do cliente': 'referencia_cliente',
         'Referência cliente': 'referencia_cliente',
         'Ref.cliente': 'referencia_cliente',
         'Emis.ordem': 'emissor_ordem',
@@ -510,8 +512,9 @@ def transformBSEG(data):
         'ACCr': 'area_controle_credito',
         'Ref.pgto.': 'referencia_pagamento',
         'ItCm': 'item_compensacao',
+        'Chv.ref.': 'chave_referencia',
         'Chave referência': 'chave_referencia',
-	'Chave ref.': 'chave_referencia',
+        'Chave ref.': 'chave_referencia',
         'Chave refer.': 'chave_referencia',
         'Tipo fluxo': 'tipo_fluxo'
     }
@@ -524,9 +527,9 @@ def transformBSEG(data):
     df['data_lancamento'] = pd.to_datetime(df['data_lancamento'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
     df['data_base_prazo_pagamento'] = pd.to_datetime(df['data_base_prazo_pagamento'].str.replace('.', '/'), format='%d/%m/%Y', errors='coerce')
     df['anular_compensacao'] = df['anular_compensacao'].replace({'X': True, '': False}).astype(bool)
-    df['empresa'] = df['empresa'].astype(str).str[:-2]
+    # df['empresa'] = df['empresa'].astype(str).str[:-2]
     df['numero_documento'] = df['numero_documento'].astype(str).str[:-2]
-    df['exercicio'] = df['exercicio'].astype(str).str[:-2]
+    df['exercicio'] = df['exercicio'].astype(str).apply(lambda x: x[:-2] if len(x) == 6 else x)
     df['item'] = df['item'].astype(str).str[:-2]
     df['chave_lancamento'] = df['chave_lancamento'].astype(str).str[:-2]
     df['conta_razao_2'] = df['conta_razao_2'].astype(str).str[:-2]

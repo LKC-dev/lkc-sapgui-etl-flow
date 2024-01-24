@@ -16,7 +16,7 @@ def sqlConnector():
     database = json.loads(get_secret("prod/BancoSQLServer"))['dbname']
     username = json.loads(get_secret("prod/BancoSQLServer"))['username']
     password = json.loads(get_secret("prod/BancoSQLServer"))['password']    
-    conn = ('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+    conn = ('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
     quoted = quote_plus(conn)
     new_con = 'mssql+pyodbc:///?odbc_connect={}'.format(quoted)
 

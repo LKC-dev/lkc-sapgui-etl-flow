@@ -14,7 +14,7 @@ logger = logging.getLogger("my_logger")
 
 @retry(tries=6, delay=61, backoff=2)
 def open_sap():
-        path = r"C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe"
+        path = r"C:\Users\Administrator\Downloads\BD_NW_7.0_Presentation_7.70_Comp._1_-20231107T174331Z-001\SAPgui\saplogon.exe"
         subprocess.Popen(path)
         logger.info('Opened SAPGUI')
         time.sleep(3)
@@ -71,15 +71,15 @@ def export_data(tablename:str, open_session):
     data = "data.txt"
 
     return data
-
-def export_data_BSEG(tablename:str, columnfilter:str, open_session):
-
-    end_date = date.today()
-    # start_date = '01.11.2023'
-    start_date = end_date - timedelta(days=1)
-    start_date = start_date.strftime("%d.%m.%Y")
-    end_date = end_date.strftime("%d.%m.%Y")
-    # end_date = '22.11.2023'
+# def export_data_BSEG(tablename:str, columnfilter:str, open_session, days_range, start_date, end_date):
+def export_data_BSEG(tablename:str, columnfilter:str, open_session, start_date, end_date):
+    
+    # end_date = date.today()
+    # start_date = '01.03.2023'
+    # start_date = end_date - timedelta(days=days_range)
+    # start_date = start_date.strftime("%d.%m.%Y")
+    # end_date = end_date.strftime("%d.%m.%Y")
+    # end_date = '31.03.2023'
 
     current_path = os.getcwd()
 
@@ -114,3 +114,9 @@ def export_data_BSEG(tablename:str, columnfilter:str, open_session):
     data = "data.txt"
 
     return data
+
+def ping_active(open_session):
+
+    current_path = os.getcwd()
+    session = open_session
+   

@@ -8,10 +8,10 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger("my_logger")
 
-def slackAlerta(msg):
-    token = (get_secret("prod/Slack"))
-    client = slack.WebClient(token=token)
-    client.chat_postMessage(channel='alertas_engenharia',text=msg)
+# def slackAlerta(msg):
+#     token = (get_secret("prod/Slack"))
+#     client = slack.WebClient(token=token)
+#     client.chat_postMessage(channel='alertas_engenharia',text=msg)
 
 def load_data(df, table_name, schema, table_id_column):
     conn = sqlConnector()
