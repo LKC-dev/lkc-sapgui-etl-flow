@@ -16,14 +16,13 @@ logger = logging.getLogger("my_logger")
 def load_data(df, table_name, schema, table_id_column):
     conn = sqlConnector()
     inserted_at = 'inserted_at'
-    etl = f'v4data-sapgui-flow-{table_name}'
+    etl = f'lkc-sapgui-flow-{table_name}'
     time_now = datetime.datetime.now()
     df_data = df
     df_data.reset_index(drop=True)
     df_data[f'{inserted_at}'] = time_now
     try:
         logger.info(f'{table_name} - Started loading to SQL SERVER')
-        # df_data.to_sql(name=table_name, index=False, con=conn, schema=schema, if_exists='append', chunksize=10000)
         df_data.to_sql(name=table_name, index=False, con=conn, schema=schema, if_exists='append', method='multi', chunksize=((2100//len(df_data.columns)-1)))
         logger.info(f'{table_name} - Inserted into')
         try:

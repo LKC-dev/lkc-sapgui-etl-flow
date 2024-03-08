@@ -20,8 +20,8 @@ def get_secret(secret:str):
     client = session.client(
         service_name='secretsmanager',
         region_name=region_name,
-        aws_access_key_id='AKIAXEQSTQKXIOFWUJ6E',
-        aws_secret_access_key='sd0Oza6Y+A/OwgK2BYtz9S3cfeQVfP2KpeD1su3G'
+        aws_access_key_id='XXXX',
+        aws_secret_access_key='XXXX'
     )
 
     # In this sample we only handle the specific exceptions for the 'GetSecretValue' API.

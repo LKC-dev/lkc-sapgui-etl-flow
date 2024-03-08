@@ -14,13 +14,13 @@ CREATE TABLE sap.clientes_kna1 (
     criado_por VARCHAR(100),
     bairro VARCHAR(100),
     idioma VARCHAR(100),
-    cnpj VARCHAR(14),  -- Assuming this is a Brazilian CNPJ, which has 14 characters
-    cpf VARCHAR(11),  -- Assuming this is a Brazilian CPF, which has 11 characters
+    cnpj VARCHAR(14), 
+    cpf VARCHAR(11), 
     pessoa_fisica BIT,
-    faturamento_anual VARCHAR(100),  -- Assuming it's a decimal number
+    faturamento_anual VARCHAR(100),
     domicilio_fiscal VARCHAR(100),
     cnae_fiscal VARCHAR(100),
-    natureza_juridica VARCHAR(4),  -- This might be the nature code (e.g., 205-4 for LTDA)
+    natureza_juridica VARCHAR(4),
     tipo_declaracao_imposto VARCHAR(100),
     inserted_at DATETIME
 );

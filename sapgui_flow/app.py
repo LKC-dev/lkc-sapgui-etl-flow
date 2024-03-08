@@ -40,7 +40,6 @@ def run():
 
     subprocess.call(["taskkill", "/F", "/IM", "saplogon.exe"])
 
-    # time.sleep(180)
     session = open_sap()
 
 
@@ -55,7 +54,7 @@ def run():
     logger.info('KNVV - Started transformation')
     data = transformKNVV(data)
     logger.info('KNVV - Finished transformation')
-    load_data(data,'clientes_knvv', 'sap', 'unique_key')    # id_cliente,organizacao_vendas,canal_distribuicao,setor_atividade
+    load_data(data,'clientes_knvv', 'sap', 'unique_key')
     pushToDataLake("sap/clientes-knvv", "clientes-knvv.csv", data)
 
     data = export_data('J_1BNFDOC', session)
@@ -69,7 +68,7 @@ def run():
     logger.info('J_1BNFLIN - Started transformation')
     data = transformJ_1BNFLIN(data)
     logger.info('J_1BNFLIN - Finished transformation')
-    load_data(data,'notas_fiscais_j1bnflin', 'sap', 'unique_key') # numero_documento,numero_item_documento
+    load_data(data,'notas_fiscais_j1bnflin', 'sap', 'unique_key')
     pushToDataLake("sap/notas-fiscais-j1bnflin", "notas-fiscais-j1bnflin.csv", data)
 
     data = export_data('VBRK', session)
@@ -124,8 +123,6 @@ def run():
         logger.info('BSEG - Started transformation')
         data = transformBSEG(data)
         logger.info('BSEG - Finished transformation')
-        # load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
-        # pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
         return data
     
     concatenated_data_bseg = pd.DataFrame()
@@ -137,14 +134,6 @@ def run():
     
     load_data(concatenated_data_bseg, 'documentos_contabeis_bseg', 'sap', 'unique_key')
     pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", concatenated_data_bseg)    
-
-    #Incremental refresh for compensated itens using AUGDT
-    # data = export_data_BSEG('BSEG', 'AUGDT', session, 360)
-    # logger.info('BSEG - Started transformation')
-    # data = transformBSEG(data)
-    # logger.info('BSEG - Finished transformation')
-    # load_data(data,'documentos_contabeis_bseg', 'sap', 'unique_key')
-    # pushToDataLake("sap/documentos-contabeis-bseg", "documentos-contabeis-bseg.csv", data)
 
     subprocess.call(["taskkill", "/F", "/IM", "saplogon.exe"])
 

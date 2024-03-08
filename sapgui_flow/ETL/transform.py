@@ -20,22 +20,7 @@ def trim_dataframe(df):
     """
     return df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
-# PREPARATIONS FOR V2 OF THIS ETL
-# def commom_data_transformation(data, tablename, columns_to_rename):
-#     logger.info(f'Started transformation {tablename}')
-#     df = pd.read_csv(data, delimiter="|", skiprows=3, skipfooter=1, encoding='iso-8859-1', encoding_errors='replace', on_bad_lines='warn')
-#     df = df.iloc[1:]
-#     df = df.loc[:, ~df.columns.str.contains('Unnamed')]
-#     df.columns = df.columns.str.strip()
-#     df = trim_dataframe(df)
-#     df = df.replace('nan', pd.NA)
-#     df.rename(columns=columns_to_rename, inplace=True)
-#     df.to_csv('df.csv')
-#     
-
-#     logger.info(f'Finished transformation {tablename}')
-#     return df
-
+#########CHANGE PARAMETERS AS NEEDED, THIS SETUP WILL ALLOW YOU TO TRANSFORM STANDARD SAP TXT EXTRACTED FILE
 
 def transformVBAK(data):
     df = pd.read_csv(data, delimiter="|", skiprows=3, skipfooter=1, encoding='iso-8859-1', encoding_errors='replace', on_bad_lines='warn', engine='python')

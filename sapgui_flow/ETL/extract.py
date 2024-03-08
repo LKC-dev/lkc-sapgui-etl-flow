@@ -14,6 +14,7 @@ logger = logging.getLogger("my_logger")
 
 @retry(tries=6, delay=61, backoff=2)
 def open_sap():
+        #########REPLACE WITH YOUR ACTUAL saplogon.exe FILEPATH
         path = r"C:\Users\Administrator\Downloads\BD_NW_7.0_Presentation_7.70_Comp._1_-20231107T174331Z-001\SAPgui\saplogon.exe"
         subprocess.Popen(path)
         logger.info('Opened SAPGUI')
@@ -21,7 +22,8 @@ def open_sap():
 
         SapGuiAuto  = win32.GetObject("SAPGUI")
         application = SapGuiAuto.GetScriptingEngine
-        connection = application.OpenConnection('V4 PRD', True)
+        #REPLACE WITH YOUR COMPANY ENV IN SAPGUI
+        connection = application.OpenConnection('YOUR COMPANY ENV', True)
         time.sleep(3)
         session = connection.Children(0)
 
@@ -73,13 +75,6 @@ def export_data(tablename:str, open_session):
     return data
 # def export_data_BSEG(tablename:str, columnfilter:str, open_session, days_range, start_date, end_date):
 def export_data_BSEG(tablename:str, columnfilter:str, open_session, start_date, end_date):
-    
-    # end_date = date.today()
-    # start_date = '01.03.2023'
-    # start_date = end_date - timedelta(days=days_range)
-    # start_date = start_date.strftime("%d.%m.%Y")
-    # end_date = end_date.strftime("%d.%m.%Y")
-    # end_date = '31.03.2023'
 
     current_path = os.getcwd()
 
